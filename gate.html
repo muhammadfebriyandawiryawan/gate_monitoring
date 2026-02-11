@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gate Monitoring - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+            color: white;
+            padding: 30px 0;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .user-profile {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .user-avatar svg {
+            width: 50px;
+            height: 50px;
+            fill: #e63946;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .menu-item {
+            padding: 12px 20px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .menu-item.active {
+            background: rgba(255,255,255,0.2);
+            font-weight: 600;
+        }
+
+        .menu-item .icon {
+            width: 18px;
+            height: 18px;
+        }
+
+        .menu-section {
+            padding: 0 35px;
+            margin-top: 10px;
+        }
+
+        .submenu-item {
+            padding: 8px 0;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            margin-left: 10px;
+            border-left: 2px solid transparent;
+            padding-left: 15px;
+        }
+
+        .submenu-item:hover {
+            border-left-color: white;
+        }
+
+        .settings-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 15px;
+            right: 15px;
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 240px;
+            right: 0;
+            height: 70px;
+            background: #2d3436;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #2d3436;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .company-name {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .header-right {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 70px;
+            padding: 30px 40px;
+            min-height: calc(100vh - 70px);
+        }
+
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+
+        .dashboard-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 5px;
+        }
+
+        .dashboard-date {
+            color: #636e72;
+            font-size: 14px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+
+        .stat-card.green {
+            background: linear-gradient(135deg, #00b894 0%, #00a383 100%);
+        }
+
+        .stat-card.red {
+            background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+        }
+
+        .stat-card.orange {
+            background: linear-gradient(135deg, #fd7e14 0%, #f56900 100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-label {
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: capitalize;
+        }
+
+        .stat-value {
+            color: white;
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        .stat-text {
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Table */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #2d3436;
+            color: white;
+        }
+
+        thead th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        tbody td {
+            padding: 18px 20px;
+            color: #2d3436;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .status-out {
+            background: #ffe0e0;
+            color: #e63946;
+        }
+
+        .status-telat {
+            background: #fff3e0;
+            color: #fd7e14;
+        }
+
+        .status-in {
+            background: #d4edda;
+            color: #00b894;
+        }
+
+        /* Real-time indicator */
+        .realtime-indicator {
+            position: fixed;
+            top: 85px;
+            right: 40px;
+            background: #00b894;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,184,148,0.3);
+            z-index: 101;
+        }
+
+        .realtime-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content,
+            .header {
+                margin-left: 0;
+            }
+
+            .header {
+                left: 0;
+            }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 90px;
+            right: -400px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            max-width: 350px;
+            transition: right 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            right: 40px;
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00b894;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #636e72;
+        }
+
+        .notification-body {
+            color: #636e72;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Monitoring Pages */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .page-header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .page-title-main {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 20px;
+        }
+
+        .search-filter-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #e63946;
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+        }
+
+        .date-select {
+            padding: 12px 18px;
+            border: 1px solid #dfe6e9;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            background: white;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+        .date-select:focus {
+            outline: none;
+            border-color: #e63946;
+        }
+
+        .search-btn {
+            padding: 12px 30px;
+            background: #636e72;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .search-btn:hover {
+            background: #2d3436;
+        }
+
+        .date-display {
+            text-align: right;
+            color: #2d3436;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .monitoring-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .monitoring-table-container table {
+            width: 100%;
+        }
+
+        .monitoring-table-container thead {
+            background: #2d3436;
+        }
+
+        .monitoring-table-container thead th {
+            padding: 16px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .monitoring-table-container tbody td {
+            padding: 16px 20px;
+            font-size: 14px;
+        }
+
+        .monitoring-table-container tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="user-profile">
+            <div class="user-avatar">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
+            <div class="user-name">Hi, Admin</div>
+        </div>
+
+        <ul class="menu">
+            <li class="menu-item" onclick="showPage('dashboard')">
+                <span class="icon">📊</span>
+                Dashboard
+            </li>
+            <li class="menu-item active">
+                <span class="icon">📋</span>
+                Form Pemantauan
+            </li>
+        </ul>
+
+        <div class="menu-section">
+            <div class="submenu-item" onclick="showPage('terlambat')">Terlambat</div>
+            <div class="submenu-item active" onclick="showPage('anomali')">Anomali</div>
+            <div class="submenu-item" onclick="showPage('situasi-lain')">Situasi Lain</div>
+        </div>
+
+        <button class="settings-btn">
+            <span class="icon">⚙️</span>
+            Settings
+        </button>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">S</div>
+            <div>
+                <div class="logo-text">SILOG</div>
+                <div class="company-name">CONSTRUCTION</div>
+            </div>
+        </div>
+        <div class="header-right">Gate Monitoring</div>
+    </div>
+
+    <!-- Real-time Indicator -->
+    <div class="realtime-indicator">
+        <div class="realtime-dot"></div>
+        LIVE
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard" class="page active">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Dashboard</h1>
+                <p class="dashboard-date" id="currentDateTime">Sen, 9 Feb 2026 07:30</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card green">
+                    <div class="stat-label">Karyawan Masuk</div>
+                    <div class="stat-value" id="karyawanMasuk">0</div>
+                    <div class="stat-text">Orang</div>
+                </div>
+
+                <div class="stat-card red">
+                    <div class="stat-label">Karyawan Keluar</div>
+                    <div class="stat-value" id="karyawanKeluar">0</div>
+                    <div class="stat-text">Orang</div>
+                </div>
+
+                <div class="stat-card orange">
+                    <div class="stat-label">Karyawan Terlambat</div>
+                    <div class="stat-value" id="karyawanTerlambat">0</div>
+                    <div class="stat-text">Orang</div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name-ID</th>
+                            <th>Status</th>
+                            <th>Gate</th>
+                            <th>Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td>Unknown - 25000</td>
+                            <td><span class="status-badge status-out">Out</span></td>
+                            <td>Out Gate 1</td>
+                            <td>10:30</td>
+                        </tr>
+                        <tr>
+                            <td>Unknown - 25000</td>
+                            <td><span class="status-badge status-telat">Telat</span></td>
+                            <td>In Gate 1</td>
+                            <td>07:35</td>
+                        </tr>
+                        <tr>
+                            <td>Unknown - 25000</td>
+                            <td><span class="status-badge status-in">In</span></td>
+                            <td>In Gate 2</td>
+                            <td>07:30</td>
+                        </tr>
+                        <tr>
+                            <td>Unknown - 25000</td>
+                            <td><span class="status-badge status-in">In</span></td>
+                            <td>In Gate 2</td>
+                            <td>07:28</td>
+                        </tr>
+                        <tr>
+                            <td>Unknown - 25000</td>
+                            <td><span class="status-badge status-in">In</span></td>
+                            <td>In Gate 1</td>
+                            <td>07:29</td>
+                        </tr>
+                        <tr>
+                            <td>Unknown - 25000</td>
+                            <td><span class="status-badge status-in">In</span></td>
+                            <td>In Gate 1</td>
+                            <td>07:20</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Anomali Keluar-Masuk Page -->
+        <div id="anomali" class="page">
+            <div class="page-header">
+                <h2 class="page-title-main">Anomali Keluar-Masuk</h2>
+                <div class="search-filter-row">
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Enter Name" id="searchNameAnomali">
+                        <select class="date-select" id="dateSelectAnomali">
+                            <option value="">Enter Date</option>
+                            <option value="2026-02-09">9 Februari 2026</option>
+                            <option value="2026-02-08">8 Februari 2026</option>
+                            <option value="2026-02-07">7 Februari 2026</option>
+                        </select>
+                        <button class="search-btn" onclick="searchAnomali()">Search</button>
+                    </div>
+                    <div class="date-display" id="currentDateAnomali">9 Februari 2026</div>
+                </div>
+            </div>
+
+            <div class="monitoring-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Name-ID</th>
+                            <th>Gate</th>
+                            <th>Waktu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="anomaliTableBody">
+                        <tr>
+                            <td>1</td>
+                            <td>Unknown - 25000</td>
+                            <td>Out Gate 2</td>
+                            <td>08:30</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Unknown - 25000</td>
+                            <td>In Gate 1</td>
+                            <td>08:30</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Unknown - 25000</td>
+                            <td>Out Gate 2</td>
+                            <td>09:48</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Unknown - 25000</td>
+                            <td>Out Gate 2</td>
+                            <td>09:55</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Unknown - 25000</td>
+                            <td>Out Gate 2</td>
+                            <td>09:55</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Unknown - 25000</td>
+                            <td>Out Gate 2</td>
+                            <td>09:55</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Unknown - 25000</td>
+                            <td>In Gate 1</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Unknown - 25000</td>
+                            <td>In Gate 1</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>Unknown - 25000</td>
+                            <td>Out Gate 2</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>Unknown - 25000</td>
+                            <td>Out Gate 2</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>11</td>
+                            <td>Unknown - 25000</td>
+                            <td>In Gate 1</td>
+                            <td>10:00</td>
+                        </tr>
+                        <tr>
+                            <td>12</td>
+                            <td>Unknown - 25000</td>
+                            <td>In Gate 1</td>
+                            <td>10:00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Terlambat Page -->
+        <div id="terlambat" class="page">
+            <div class="page-header">
+                <h2 class="page-title-main">Karyawan Terlambat</h2>
+                <div class="search-filter-row">
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Enter Name" id="searchNameTerlambat">
+                        <select class="date-select" id="dateSelectTerlambat">
+                            <option value="">Enter Date</option>
+                            <option value="2026-02-09">9 Februari 2026</option>
+                            <option value="2026-02-08">8 Februari 2026</option>
+                            <option value="2026-02-07">7 Februari 2026</option>
+                        </select>
+                        <button class="search-btn" onclick="searchTerlambat()">Search</button>
+                    </div>
+                    <div class="date-display" id="currentDateTerlambat">9 Februari 2026</div>
+                </div>
+            </div>
+
+            <div class="monitoring-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Name-ID</th>
+                            <th>Gate</th>
+                            <th>Waktu Masuk</th>
+                            <th>Keterlambatan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="terlambatTableBody">
+                        <tr>
+                            <td>1</td>
+                            <td>Ahmad Hidayat - 25001</td>
+                            <td>In Gate 1</td>
+                            <td>07:45</td>
+                            <td>15 Menit</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Siti Nurhaliza - 25002</td>
+                            <td>In Gate 2</td>
+                            <td>07:50</td>
+                            <td>20 Menit</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Budi Santoso - 25003</td>
+                            <td>In Gate 1</td>
+                            <td>08:00</td>
+                            <td>30 Menit</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Rina Wijaya - 25004</td>
+                            <td>In Gate 2</td>
+                            <td>08:15</td>
+                            <td>45 Menit</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Dedi Kurniawan - 25005</td>
+                            <td>In Gate 1</td>
+                            <td>08:30</td>
+                            <td>1 Jam</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Maya Lestari - 25006</td>
+                            <td>In Gate 2</td>
+                            <td>07:35</td>
+                            <td>5 Menit</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Rudi Hermawan - 25007</td>
+                            <td>In Gate 1</td>
+                            <td>07:40</td>
+                            <td>10 Menit</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Lisa Permata - 25008</td>
+                            <td>In Gate 2</td>
+                            <td>08:05</td>
+                            <td>35 Menit</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Situasi Lain Page -->
+        <div id="situasi-lain" class="page">
+            <div class="page-header">
+                <h2 class="page-title-main">Situasi Lain</h2>
+                <div class="search-filter-row">
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Enter Name" id="searchNameSituasi">
+                        <select class="date-select" id="dateSelectSituasi">
+                            <option value="">Enter Date</option>
+                            <option value="2026-02-09">9 Februari 2026</option>
+                            <option value="2026-02-08">8 Februari 2026</option>
+                            <option value="2026-02-07">7 Februari 2026</option>
+                        </select>
+                        <button class="search-btn" onclick="searchSituasi()">Search</button>
+                    </div>
+                    <div class="date-display" id="currentDateSituasi">9 Februari 2026</div>
+                </div>
+            </div>
+
+            <div class="monitoring-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Name-ID</th>
+                            <th>Gate</th>
+                            <th>Waktu</th>
+                            <th>Keterangan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="situasiTableBody">
+                        <tr>
+                            <td>1</td>
+                            <td>Andi Prasetyo - 25009</td>
+                            <td>In Gate 1</td>
+                            <td>09:15</td>
+                            <td>Lupa Kartu ID</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Dwi Anggraini - 25010</td>
+                            <td>Out Gate 2</td>
+                            <td>14:30</td>
+                            <td>Keperluan Mendesak</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Agus Setiawan - 25011</td>
+                            <td>In Gate 1</td>
+                            <td>10:00</td>
+                            <td>Sakit</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Putri Handayani - 25012</td>
+                            <td>Out Gate 1</td>
+                            <td>11:45</td>
+                            <td>Meeting Eksternal</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>Bambang Wijaya - 25013</td>
+                            <td>In Gate 2</td>
+                            <td>13:20</td>
+                            <td>Cuti Setengah Hari</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>Fajar Pratama - 25014</td>
+                            <td>Out Gate 2</td>
+                            <td>15:00</td>
+                            <td>Urusan Keluarga</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-header">
+            <div class="notification-icon">✓</div>
+            <div>
+                <div class="notification-title">Data Baru Ditambahkan</div>
+                <div class="notification-time" id="notifTime">Baru saja</div>
+            </div>
+        </div>
+        <div class="notification-body" id="notifBody">
+            Karyawan baru telah tercatat masuk melalui Gate 1
+        </div>
+    </div>
+
+    <script>
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Update menu active state
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.submenu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Set active menu
+            if (pageId === 'dashboard') {
+                document.querySelector('.menu-item').classList.add('active');
+            } else {
+                document.querySelectorAll('.menu-item')[1].classList.add('active');
+                document.querySelector(`.submenu-item[onclick*="${pageId}"]`).classList.add('active');
+            }
+
+            // Update header title
+            const titles = {
+                'dashboard': 'Gate Monitoring',
+                'anomali': 'Gate Monitoring',
+                'terlambat': 'Gate Monitoring',
+                'situasi-lain': 'Gate Monitoring'
+            };
+            document.querySelector('.header-right').textContent = titles[pageId];
+        }
+
+        // Search Functions
+        function searchAnomali() {
+            const searchName = document.getElementById('searchNameAnomali').value.toLowerCase();
+            const dateSelect = document.getElementById('dateSelectAnomali').value;
+            const rows = document.querySelectorAll('#anomaliTableBody tr');
+
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const showRow = (!searchName || name.includes(searchName)) && 
+                               (!dateSelect || true); // Date filter logic can be enhanced
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+
+        function searchTerlambat() {
+            const searchName = document.getElementById('searchNameTerlambat').value.toLowerCase();
+            const dateSelect = document.getElementById('dateSelectTerlambat').value;
+            const rows = document.querySelectorAll('#terlambatTableBody tr');
+
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const showRow = (!searchName || name.includes(searchName)) && 
+                               (!dateSelect || true);
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+
+        function searchSituasi() {
+            const searchName = document.getElementById('searchNameSituasi').value.toLowerCase();
+            const dateSelect = document.getElementById('dateSelectSituasi').value;
+            const rows = document.querySelectorAll('#situasiTableBody tr');
+
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const showRow = (!searchName || name.includes(searchName)) && 
+                               (!dateSelect || true);
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+
+        // Real-time data
+        let employeeData = [
+            { id: '25000', name: 'Unknown', status: 'Out', gate: 'Out Gate 1', time: '10:30' },
+            { id: '25000', name: 'Unknown', status: 'Telat', gate: 'In Gate 1', time: '07:35' },
+            { id: '25000', name: 'Unknown', status: 'In', gate: 'In Gate 2', time: '07:30' },
+            { id: '25000', name: 'Unknown', status: 'In', gate: 'In Gate 2', time: '07:28' },
+            { id: '25000', name: 'Unknown', status: 'In', gate: 'In Gate 1', time: '07:29' },
+            { id: '25000', name: 'Unknown', status: 'In', gate: 'In Gate 1', time: '07:20' }
+        ];
+
+        const sampleNames = [
+            'Budi Santoso', 'Siti Nurhaliza', 'Ahmad Hidayat', 'Rina Wijaya',
+            'Dedi Kurniawan', 'Lisa Permata', 'Rudi Hermawan', 'Maya Lestari',
+            'Andi Prasetyo', 'Dwi Anggraini', 'Agus Setiawan', 'Putri Handayani'
+        ];
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Oct', 'Nov', 'Des'];
+            
+            const day = days[now.getDay()];
+            const date = now.getDate();
+            const month = months[now.getMonth()];
+            const year = now.getFullYear();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            document.getElementById('currentDateTime').textContent = 
+                `${day}, ${date} ${month} ${year} ${hours}:${minutes}`;
+        }
+
+        // Update statistics
+        function updateStats() {
+            const masuk = employeeData.filter(e => e.status === 'In').length;
+            const keluar = employeeData.filter(e => e.status === 'Out').length;
+            const telat = employeeData.filter(e => e.status === 'Telat').length;
+
+            document.getElementById('karyawanMasuk').textContent = masuk;
+            document.getElementById('karyawanKeluar').textContent = keluar;
+            document.getElementById('karyawanTerlambat').textContent = telat;
+        }
+
+        // Render table
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            employeeData.forEach(emp => {
+                const row = document.createElement('tr');
+                const statusClass = emp.status === 'Out' ? 'status-out' : 
+                                   emp.status === 'Telat' ? 'status-telat' : 'status-in';
+                
+                row.innerHTML = `
+                    <td>${emp.name} - ${emp.id}</td>
+                    <td><span class="status-badge ${statusClass}">${emp.status}</span></td>
+                    <td>${emp.gate}</td>
+                    <td>${emp.time}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateStats();
+        }
+
+        // Generate random employee
+        function generateRandomEmployee() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const time = `${hours}:${minutes}`;
+            
+            const statuses = ['In', 'Out', 'Telat'];
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+            const gate = Math.random() > 0.5 ? 'Gate 1' : 'Gate 2';
+            const gatePrefix = status === 'Out' ? 'Out' : 'In';
+            const name = sampleNames[Math.floor(Math.random() * sampleNames.length)];
+            const id = String(25000 + Math.floor(Math.random() * 100));
+
+            return {
+                id: id,
+                name: name,
+                status: status,
+                gate: `${gatePrefix} ${gate}`,
+                time: time
+            };
+        }
+
+        // Add new employee
+        function addNewEmployee() {
+            const newEmp = generateRandomEmployee();
+            employeeData.unshift(newEmp);
+            
+            // Keep only last 10 entries
+            if (employeeData.length > 10) {
+                employeeData.pop();
+            }
+
+            renderTable();
+            showNotification(newEmp);
+
+            // Highlight new row
+            const firstRow = document.querySelector('#tableBody tr:first-child');
+            if (firstRow) {
+                firstRow.style.backgroundColor = '#fff3e0';
+                setTimeout(() => {
+                    firstRow.style.backgroundColor = '';
+                }, 2000);
+            }
+        }
+
+        // Show notification
+        function showNotification(emp) {
+            const notification = document.getElementById('notification');
+            const notifBody = document.getElementById('notifBody');
+            
+            notifBody.textContent = `${emp.name} tercatat ${emp.status.toLowerCase()} melalui ${emp.gate} pada ${emp.time}`;
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 4000);
+        }
+
+        // Initialize
+        updateDateTime();
+        renderTable();
+
+        // Update time every minute
+        setInterval(updateDateTime, 60000);
+
+        // Add new employee every 8 seconds (only on dashboard)
+        setInterval(() => {
+            if (document.getElementById('dashboard').classList.contains('active')) {
+                addNewEmployee();
+            }
+        }, 8000);
+
+        // Update stats every 5 seconds
+        setInterval(updateStats, 5000);
+
+        console.log('%c🔴 GATE MONITORING SYSTEM ACTIVE', 'color: #e63946; font-size: 16px; font-weight: bold;');
+        console.log('%c✓ Real-time monitoring enabled', 'color: #00b894; font-size: 12px;');
+        console.log('%c✓ Multiple pages navigation', 'color: #00b894; font-size: 12px;');
+    </script>
+</body>
+</html>
