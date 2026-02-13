@@ -619,6 +619,7 @@
         <div class="menu-section">
             <div class="submenu-item" onclick="showPage('terlambat')">Terlambat</div>
             <div class="submenu-item active" onclick="showPage('anomali')">Anomali</div>
+            <div class="submenu-item" onclick="showPage('double-tapping')">Double Tapping</div>
             <div class="submenu-item" onclick="showPage('situasi-lain')">Situasi Lain</div>
         </div>
 
@@ -1005,6 +1006,256 @@
                 </table>
             </div>
         </div>
+
+        <!-- Double Tapping Page -->
+        <div id="double-tapping" class="page">
+            <div class="page-header">
+                <h2 class="page-title-main">Double Tapping</h2>
+                <div class="search-filter-row">
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Enter Name" id="searchNameDouble">
+                        <select class="date-select" id="dateSelectDouble">
+                            <option value="">Enter Date</option>
+                            <option value="2026-02-12">12 Februari 2026</option>
+                            <option value="2026-02-11">11 Februari 2026</option>
+                            <option value="2026-02-10">10 Februari 2026</option>
+                            <option value="2026-02-09">9 Februari 2026</option>
+                        </select>
+                        <button class="search-btn" onclick="searchDouble()">Search</button>
+                    </div>
+                    <div class="date-display" id="currentDateDouble">12 Februari 2026</div>
+                </div>
+            </div>
+
+            <div class="monitoring-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;"></th>
+                            <th>Nama</th>
+                            <th>ID</th>
+                            <th>No. Telp</th>
+                            <th>Departemen</th>
+                            <th>Tanggal</th>
+                            <th>Gate</th>
+                            <th>Status</th>
+                            <th>Akses</th>
+                            <th>Jenis Kehadiran</th>
+                            <th style="width: 60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="doubleTappingTableBody">
+                        <tr>
+                            <td>
+                                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>Maulana M Iq...</td>
+                            <td>25185</td>
+                            <td>0526405836</td>
+                            <td>SILOG > KARYAWAN</td>
+                            <td>2026-02-12<br>09:14:44</td>
+                            <td>OUT GATE II</td>
+                            <td>Otorisasikan</td>
+                            <td>Akses dengan Kartu Diberikan</td>
+                            <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                            <td>
+                                <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    📄
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>Maulana M Iq...</td>
+                            <td>25185</td>
+                            <td>0526405836</td>
+                            <td>SILOG > KARYAWAN</td>
+                            <td>2026-02-12<br>09:14:42</td>
+                            <td>OUT GATE II</td>
+                            <td>Otorisasikan</td>
+                            <td>Akses dengan Kartu Diberikan</td>
+                            <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                            <td>
+                                <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    📄
+                                </button>
+                            </td>
+                        </tr>
+                        <tr style="background: #f8f9fa;">
+                            <td>
+                                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>Maulana M Iq...</td>
+                            <td>25185</td>
+                            <td>0526405836</td>
+                            <td>SILOG > KARYAWAN</td>
+                            <td>2026-02-12<br>09:14:38</td>
+                            <td>OUT GATE II</td>
+                            <td>Otorisasikan</td>
+                            <td>Akses dengan Kartu Diberikan</td>
+                            <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                            <td>
+                                <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    📄
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>Ahmad Yusuf</td>
+                            <td>25186</td>
+                            <td>0526405837</td>
+                            <td>SILOG > KARYAWAN</td>
+                            <td>2026-02-12<br>07:30:15</td>
+                            <td>IN GATE I</td>
+                            <td>Otorisasikan</td>
+                            <td>Akses dengan Kartu Diberikan</td>
+                            <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                            <td>
+                                <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    📄
+                                </button>
+                            </td>
+                        </tr>
+                        <tr style="background: #f8f9fa;">
+                            <td>
+                                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>Ahmad Yusuf</td>
+                            <td>25186</td>
+                            <td>0526405837</td>
+                            <td>SILOG > KARYAWAN</td>
+                            <td>2026-02-12<br>07:30:14</td>
+                            <td>IN GATE I</td>
+                            <td>Otorisasikan</td>
+                            <td>Akses dengan Kartu Diberikan</td>
+                            <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                            <td>
+                                <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    📄
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>Siti Rahmawati</td>
+                            <td>25187</td>
+                            <td>0526405838</td>
+                            <td>SILOG > KARYAWAN</td>
+                            <td>2026-02-12<br>08:15:22</td>
+                            <td>IN GATE II</td>
+                            <td>Otorisasikan</td>
+                            <td>Akses dengan Kartu Diberikan</td>
+                            <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                            <td>
+                                <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    📄
+                                </button>
+                            </td>
+                        </tr>
+                        <tr style="background: #f8f9fa;">
+                            <td>
+                                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>Siti Rahmawati</td>
+                            <td>25187</td>
+                            <td>0526405838</td>
+                            <td>SILOG > KARYAWAN</td>
+                            <td>2026-02-12<br>08:15:21</td>
+                            <td>IN GATE II</td>
+                            <td>Otorisasikan</td>
+                            <td>Akses dengan Kartu Diberikan</td>
+                            <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                            <td>
+                                <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    📄
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>Budi Hartono</td>
+                            <td>25188</td>
+                            <td>0526405839</td>
+                            <td>SILOG > KARYAWAN</td>
+                            <td>2026-02-12<br>17:00:10</td>
+                            <td>OUT GATE I</td>
+                            <td>Otorisasikan</td>
+                            <td>Akses dengan Kartu Diberikan</td>
+                            <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                            <td>
+                                <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    📄
+                                </button>
+                            </td>
+                        </tr>
+                        <tr style="background: #f8f9fa;">
+                            <td>
+                                <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    </svg>
+                                </div>
+                            </td>
+                            <td>Budi Hartono</td>
+                            <td>25188</td>
+                            <td>0526405839</td>
+                            <td>SILOG > KARYAWAN</td>
+                            <td>2026-02-12<br>17:00:09</td>
+                            <td>OUT GATE I</td>
+                            <td>Otorisasikan</td>
+                            <td>Akses dengan Kartu Diberikan</td>
+                            <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                            <td>
+                                <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                                    📄
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- Notification -->
@@ -1053,6 +1304,7 @@
                 'dashboard': 'Gate Monitoring',
                 'anomali': 'Gate Monitoring',
                 'terlambat': 'Gate Monitoring',
+                'double-tapping': 'Gate Monitoring',
                 'situasi-lain': 'Gate Monitoring'
             };
             document.querySelector('.header-right').textContent = titles[pageId];
@@ -1076,6 +1328,19 @@
             const searchName = document.getElementById('searchNameTerlambat').value.toLowerCase();
             const dateSelect = document.getElementById('dateSelectTerlambat').value;
             const rows = document.querySelectorAll('#terlambatTableBody tr');
+
+            rows.forEach(row => {
+                const name = row.cells[1].textContent.toLowerCase();
+                const showRow = (!searchName || name.includes(searchName)) && 
+                               (!dateSelect || true);
+                row.style.display = showRow ? '' : 'none';
+            });
+        }
+
+        function searchDouble() {
+            const searchName = document.getElementById('searchNameDouble').value.toLowerCase();
+            const dateSelect = document.getElementById('dateSelectDouble').value;
+            const rows = document.querySelectorAll('#doubleTappingTableBody tr');
 
             rows.forEach(row => {
                 const name = row.cells[1].textContent.toLowerCase();
