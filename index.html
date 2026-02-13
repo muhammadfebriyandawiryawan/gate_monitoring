@@ -1373,11 +1373,140 @@
             { id: '25000', name: 'Unknown', status: 'In', gate: 'In Gate 1', time: '07:20' }
         ];
 
+        // Double Tapping data storage
+        let doubleTappingData = [];
+
+        // Store employee access history for double tap detection
+        let accessHistory = [];
+
         const sampleNames = [
             'Budi Santoso', 'Siti Nurhaliza', 'Ahmad Hidayat', 'Rina Wijaya',
             'Dedi Kurniawan', 'Lisa Permata', 'Rudi Hermawan', 'Maya Lestari',
-            'Andi Prasetyo', 'Dwi Anggraini', 'Agus Setiawan', 'Putri Handayani'
+            'Andi Prasetyo', 'Dwi Anggraini', 'Agus Setiawan', 'Putri Handayani',
+            'Maulana M Iqbal', 'Ahmad Yusuf', 'Siti Rahmawati', 'Budi Hartono',
+            'Fajar Pratama', 'Indah Sari', 'Rizky Ramadan', 'Ayu Lestari'
         ];
+
+        const departments = ['SILOG > KARYAWAN', 'SILOG > STAFF', 'SILOG > MANAGER'];
+
+        // Check if access is a double tap (within 5 seconds, same person, same gate, same direction)
+        function isDoubleTap(newAccess) {
+            const recentAccesses = accessHistory.filter(acc => {
+                const timeDiff = Math.abs(new Date(`2026-02-12 ${newAccess.time}`).getTime() - 
+                                         new Date(`2026-02-12 ${acc.time}`).getTime()) / 1000;
+                return acc.id === newAccess.id && 
+                       acc.gate === newAccess.gate && 
+                       acc.direction === newAccess.direction &&
+                       timeDiff <= 5 && 
+                       timeDiff > 0;
+            });
+            return recentAccesses.length > 0;
+        }
+
+        // Add access to history
+        function addToAccessHistory(access) {
+            accessHistory.unshift(access);
+            // Keep only last 50 accesses
+            if (accessHistory.length > 50) {
+                accessHistory.pop();
+            }
+        }
+
+        // Generate phone number
+        function generatePhone() {
+            return '0526' + Math.floor(400000 + Math.random() * 100000);
+        }
+
+        // Render double tapping table
+        function renderDoubleTappingTable() {
+            const tbody = document.getElementById('doubleTappingTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+
+            doubleTappingData.forEach((emp, index) => {
+                const row = document.createElement('tr');
+                if (index % 2 === 1) {
+                    row.style.backgroundColor = '#f8f9fa';
+                }
+                
+                row.innerHTML = `
+                    <td>
+                        <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#999">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                    </td>
+                    <td>${emp.name}</td>
+                    <td>${emp.id}</td>
+                    <td>${emp.phone}</td>
+                    <td>${emp.department}</td>
+                    <td>${emp.date}<br>${emp.time}</td>
+                    <td>${emp.gate}</td>
+                    <td>Otorisasikan</td>
+                    <td>Akses dengan Kartu Diberikan</td>
+                    <td>Jenis Kehadiran Tidak Terdefinisikan</td>
+                    <td>
+                        <button style="background: none; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; cursor: pointer;">
+                            📄
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Add double tap event
+        function addDoubleTapEvent(access) {
+            const newEntry = {
+                name: access.name,
+                id: access.id,
+                phone: access.phone,
+                department: access.department,
+                date: access.date,
+                time: access.time,
+                gate: access.gate,
+                direction: access.direction
+            };
+
+            doubleTappingData.unshift(newEntry);
+
+            // Keep only last 20 double tap records
+            if (doubleTappingData.length > 20) {
+                doubleTappingData.pop();
+            }
+
+            renderDoubleTappingTable();
+
+            // Show notification
+            showDoubleTapNotification(newEntry);
+
+            // Highlight new row
+            const firstRow = document.querySelector('#doubleTappingTableBody tr:first-child');
+            if (firstRow) {
+                firstRow.style.backgroundColor = '#fff3e0';
+                setTimeout(() => {
+                    firstRow.style.backgroundColor = firstRow.dataset.originalBg || '';
+                }, 3000);
+            }
+        }
+
+        // Show double tap notification
+        function showDoubleTapNotification(emp) {
+            const notification = document.getElementById('notification');
+            const notifBody = document.getElementById('notifBody');
+            const notifTitle = document.querySelector('.notification-title');
+            
+            notifTitle.textContent = '⚠️ Double Tapping Terdeteksi';
+            notifBody.textContent = `${emp.name} melakukan double tap di ${emp.gate} pada ${emp.time}`;
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
 
         // Update date and time
         function updateDateTime() {
@@ -1434,22 +1563,59 @@
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            const time = `${hours}:${minutes}`;
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const time = `${hours}:${minutes}:${seconds}`;
             
             const statuses = ['In', 'Out', 'Telat'];
             const status = statuses[Math.floor(Math.random() * statuses.length)];
-            const gate = Math.random() > 0.5 ? 'Gate 1' : 'Gate 2';
+            const gateNum = Math.random() > 0.5 ? '1' : '2';
+            const direction = status === 'Out' ? 'OUT' : 'IN';
+            const gate = `${direction} GATE ${gateNum === '1' ? 'I' : 'II'}`;
             const gatePrefix = status === 'Out' ? 'Out' : 'In';
             const name = sampleNames[Math.floor(Math.random() * sampleNames.length)];
-            const id = String(25000 + Math.floor(Math.random() * 100));
+            const id = String(25000 + Math.floor(Math.random() * 200));
+            const phone = generatePhone();
+            const department = departments[Math.floor(Math.random() * departments.length)];
+            
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
 
-            return {
+            const access = {
                 id: id,
                 name: name,
                 status: status,
-                gate: `${gatePrefix} ${gate}`,
-                time: time
+                gate: `${gatePrefix} Gate ${gateNum}`,
+                time: time,
+                phone: phone,
+                department: department,
+                date: dateStr,
+                fullGate: gate,
+                direction: direction
             };
+
+            // Check for double tap (simulate 20% chance for demo purposes)
+            const shouldDoubleTap = Math.random() < 0.2;
+            
+            if (shouldDoubleTap || isDoubleTap(access)) {
+                // Add to double tapping records
+                addDoubleTapEvent({
+                    name: name,
+                    id: id,
+                    phone: phone,
+                    department: department,
+                    date: dateStr,
+                    time: time,
+                    gate: gate,
+                    direction: direction
+                });
+            }
+
+            // Add to access history
+            addToAccessHistory(access);
+
+            return access;
         }
 
         // Add new employee
@@ -1492,6 +1658,22 @@
         // Initialize
         updateDateTime();
         renderTable();
+        renderDoubleTappingTable();
+
+        // Initialize with some double tap data
+        const initialDoubleTaps = [
+            { name: 'Maulana M Iqbal', id: '25185', phone: '0526405836', department: 'SILOG > KARYAWAN', date: '2026-02-12', time: '09:14:44', gate: 'OUT GATE II', direction: 'OUT' },
+            { name: 'Maulana M Iqbal', id: '25185', phone: '0526405836', department: 'SILOG > KARYAWAN', date: '2026-02-12', time: '09:14:42', gate: 'OUT GATE II', direction: 'OUT' },
+            { name: 'Maulana M Iqbal', id: '25185', phone: '0526405836', department: 'SILOG > KARYAWAN', date: '2026-02-12', time: '09:14:38', gate: 'OUT GATE II', direction: 'OUT' },
+            { name: 'Ahmad Yusuf', id: '25186', phone: '0526405837', department: 'SILOG > KARYAWAN', date: '2026-02-12', time: '07:30:15', gate: 'IN GATE I', direction: 'IN' },
+            { name: 'Ahmad Yusuf', id: '25186', phone: '0526405837', department: 'SILOG > KARYAWAN', date: '2026-02-12', time: '07:30:14', gate: 'IN GATE I', direction: 'IN' },
+            { name: 'Siti Rahmawati', id: '25187', phone: '0526405838', department: 'SILOG > KARYAWAN', date: '2026-02-12', time: '08:15:22', gate: 'IN GATE II', direction: 'IN' },
+            { name: 'Siti Rahmawati', id: '25187', phone: '0526405838', department: 'SILOG > KARYAWAN', date: '2026-02-12', time: '08:15:21', gate: 'IN GATE II', direction: 'IN' },
+            { name: 'Budi Hartono', id: '25188', phone: '0526405839', department: 'SILOG > KARYAWAN', date: '2026-02-12', time: '17:00:10', gate: 'OUT GATE I', direction: 'OUT' },
+            { name: 'Budi Hartono', id: '25188', phone: '0526405839', department: 'SILOG > KARYAWAN', date: '2026-02-12', time: '17:00:09', gate: 'OUT GATE I', direction: 'OUT' }
+        ];
+        doubleTappingData = initialDoubleTaps;
+        renderDoubleTappingTable();
 
         // Update time every minute
         setInterval(updateDateTime, 60000);
@@ -1503,12 +1685,47 @@
             }
         }, 8000);
 
+        // Simulate real-time double tap detection (every 12 seconds)
+        setInterval(() => {
+            // Random chance to generate a double tap event
+            if (Math.random() < 0.3) {
+                const now = new Date();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const seconds = String(now.getSeconds()).padStart(2, '0');
+                const time = `${hours}:${minutes}:${seconds}`;
+                
+                const name = sampleNames[Math.floor(Math.random() * sampleNames.length)];
+                const id = String(25000 + Math.floor(Math.random() * 200));
+                const phone = generatePhone();
+                const department = departments[Math.floor(Math.random() * departments.length)];
+                const direction = Math.random() > 0.5 ? 'OUT' : 'IN';
+                const gateNum = Math.random() > 0.5 ? 'I' : 'II';
+                
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                
+                addDoubleTapEvent({
+                    name: name,
+                    id: id,
+                    phone: phone,
+                    department: department,
+                    date: `${year}-${month}-${day}`,
+                    time: time,
+                    gate: `${direction} GATE ${gateNum}`,
+                    direction: direction
+                });
+            }
+        }, 12000);
+
         // Update stats every 5 seconds
         setInterval(updateStats, 5000);
 
         console.log('%c🔴 GATE MONITORING SYSTEM ACTIVE', 'color: #e63946; font-size: 16px; font-weight: bold;');
         console.log('%c✓ Real-time monitoring enabled', 'color: #00b894; font-size: 12px;');
         console.log('%c✓ Multiple pages navigation', 'color: #00b894; font-size: 12px;');
+        console.log('%c✓ Double Tapping detection active', 'color: #fd7e14; font-size: 12px;');
     </script>
 </body>
 </html>
